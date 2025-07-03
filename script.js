@@ -239,7 +239,7 @@ function calculateAllPositions(day, month, year) {
         ]
     };
     
-    return cardDefinitions[currentSpreadType] || [];
+    return cardDefinitions[currentSpreadType] || []; // ← ТОЛЬКО ЭТУ СТРОКУ ИЗМЕНИЛИ
 }
 
 function calculateCard(num) {
