@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тарологический портрет</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Marmelad&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <div class="matrix-background"></div>
+    
+    <div class="container">
+        <h1>🔮 Выберите тип портрета</h1>
+        
+        <!-- Блок выбора типа портрета -->
+        <div class="spreads-menu">
+            <div class="spread-card active" data-spread="individual" data-json="ind.json">
+                <div class="spread-icon">👤</div>
+                <h3>Индивидуальный портрет</h3>
+            </div>
+            <div class="spread-card" data-spread="shadow" data-json="shadow.json">
+                <div class="spread-icon">🌑</div>
+                <h3>Теневой портрет</h3>
+            </div>
+            <div class="spread-card" data-spread="karma" data-json="karma.json">
+                <div class="spread-icon">🔄</div>
+                <h3>Кармический портрет</h3>
+            </div>
+        </div>
+        
+        <!-- Блок ввода даты -->
+        <div class="input-section">
+            <h3 id="dateb">Введите дату рождения:</h3>
+            <div class="date-input-container">
+                <input type="text" id="birthDate" placeholder="ДД.ММ.ГГГГ" maxlength="10" readonly>
+                <span class="date-icon">📅</span>
+                <div class="date-hint">Формат: ДД.ММ.ГГГГ</div>
+            </div>
+            <button id="calculateBtn">Рассчитать</button>
+            <div class="note">
+                <p class="p1">Расклад основан на трактовке Старших Арканов</p> 
+            </div>
+        </div>
+        
+        <!-- Блок результатов (изначально пустой) -->
+        <div class="result-section" id="result"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+    <script src="script.js"></script>
+    <script src="matrixstyle.js"></script>
+</body>
+</html>
