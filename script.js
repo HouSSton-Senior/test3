@@ -45,25 +45,21 @@ async function loadMeaningsData(jsonFile) {
 
 // Инициализация календаря (flatpickr)
 function initDatePicker() {
-    flatpickr("#birthDate", {
+    const dateInput = document.getElementById('birthDate');
+    if (!dateInput) {
+        console.error('Элемент #birthDate не найден!');
+        return;
+    }
+
+    flatpickr(dateInput, {
         dateFormat: "d.m.Y",
         maxDate: "today",
         locale: "ru",
         allowInput: true,
         onReady: function(instance) {
-            instance.input.removeAttribute('readonly');
-            instance.input.addEventListener('input', function(e) {
-                // Форматирование ввода ДД.ММ.ГГГГ
-                let value = e.target.value.replace(/[^\d]/g, '');
-                let formatted = '';
-                for (let i = 0; i < value.length; i++) {
-                    if (i === 2 || i === 4) formatted += '.';
-                    formatted += value[i];
-                    if (formatted.length >= 10) break;
-                }
-                e.target.value = formatted;
-                e.target.classList.toggle('error', !isValidDate(formatted));
-            });
+            if (instance.input) {
+                instance.input.removeAttribute('readonly');
+            }
         }
     });
 }
