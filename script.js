@@ -126,18 +126,18 @@ async function calculatePortrait() {
 }
 
 // Создание карточек на странице
-function createCardsLayout(spreadType, positions) {
+function createCardsLayout(currentSpreadType, positions) {
     const resultSection = document.getElementById('result');
     if (!resultSection) return;
     
     resultSection.innerHTML = '<div class="cards-grid"></div>';
     const cardsGrid = resultSection.querySelector('.cards-grid');
     
-    getCardDefinitions(spreadType).forEach(cardDef => {
+    getCardDefinitions(currentSpreadType).forEach(cardDef => {
         const cardNum = positions[cardDef.position] || 0;
         const baseCard = arcanaBaseData.find(c => c.id === cardNum) || {};
         const meaningsCard = arcanaMeaningsData.find(c => c.id === cardNum) || {};
-        const meaning = getCardMeaning(meaningsCard, cardDef.position, spreadType);
+        const meaning = getCardMeaning(meaningsCard, cardDef.position, currentSpreadType);
         
         const cardHTML = `
             <div class="card" id="pos${cardDef.position}-card">
@@ -150,7 +150,7 @@ function createCardsLayout(spreadType, positions) {
                 <div class="arcana-result">
                     <h4>${baseCard.name || 'Неизвестно'} <span class="arcana-number">${cardNum}</span></h4>
                     <p class="arcana-meaning"><strong>${meaning}</strong></p>
-                    ${spreadType === 'shadow' ? 
+                    ${currentSpreadType === 'shadow' ? 
                         `<p class="shadow-aspect"><em>Теневая сторона: ${meaningsCard.meanings?.shadow?.default || 'нет информации'}</em></p>` : ''}
                 </div>
             </div>
@@ -175,7 +175,7 @@ function createCardsLayout(spreadType, positions) {
 }
 
 // Ваши заполненные карточки (оставьте без изменений!)
-function getCardDefinitions(spreadType) {
+function getCardDefinitions(currentSpreadType) {
     const cardDefinitions = {
         individual: [
             { position: '1', title: '1. Детство и Юность (до 25 лет)', description: 'Базовая энергия', fullDescription: 'Позиция 1 - Базовая энергия.' },
@@ -190,13 +190,13 @@ function getCardDefinitions(spreadType) {
             // ... остальные карточки кармического портрета
         ]
     };
-    return cardDefinitions[spreadType] || [];
+    return cardDefinitions[currentSpreadType] || [];
 }
 
 // Остальные функции (без изменений)
-function getCardMeaning(card, position, spreadType) {
-    if (!card?.meanings?.[spreadType]) return 'Нет данных';
-    const meanings = card.meanings[spreadType];
+function getCardMeaning(card, position, currentSpreadType) {
+    if (!card?.meanings?.[currentSpreadType]) return 'Нет данных';
+    const meanings = card.meanings[currentSpreadType];
     return meanings[position] || meanings.default || 'Нет описания';
 }
 
@@ -243,7 +243,7 @@ function calculateAllPositions(day, month, year) {
         ]
     };
     
-    return cardDefinitions[spreadType] || [];
+    return cardDefinitions[currentSpreadType] || [];
 }
 
 function calculateCard(num) {
