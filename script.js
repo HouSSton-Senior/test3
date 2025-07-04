@@ -254,29 +254,27 @@ function calculateCard(number) {
 }
 function calculateAllPositions(day, month, year) {
     // Основные позиции
-    const p1 = calculateCard(day); // День
-    const p2 = calculateCard(month); // Месяц
-    const p3 = calculateCard([...String(year)].reduce((sum, d) => sum + Number(d), 0)); // Сумма цифр года
+    positions[1] = calculateCard(day); // День
+    positions[2] = calculateCard(month); // Месяц
+    positions[3] = calculateCard([...String(year)].reduce((sum, d) => sum + Number(d), 0)); // Сумма цифр года
 
     // Индивидуальный портрет
-    const positions = {
-        1: p1, 2: p2, 3: p3,
-        4: calculateCard(p1 + p2),
-        5: calculateCard(p2 + p3),
-        6: calculateCard(p4 + p5),   
-    };
-        positions[7] = calculateCard(p1 + positions[5]);
-        positions[8] = calculateCard(p2 + positions[6]);
-        positions[12] = calculateCard(positions[7] + positions[8]);
-        positions[13] = calculateCard(p1 + positions[4] + positions[6]);
-        positions[14] = calculateCard(p3 + positions[5] + positions[6]);
+    // производные 4-14
+    positions[4] = calculateCard(positions[1] + positions[2]);
+    positions[5] = calculateCard(positions[2] + positions[3]);
+    positions[6] = calculateCard(positions[1] + positions[3]);
+    positions[7] = calculateCard(positions[1] + positions[5]);
+    positions[8] = calculateCard(positions[2] + positions[6]);
+    positions[12] = calculateCard(positions[7] + positions[8]);
+    positions[13] = calculateCard(positions[1] + positions[4] + positions[6]);
+    positions[14] = calculateCard(positions[3] + positions[5] + positions[6]);
 
     // Теневой портрет
-    positions['4.1'] = calculateCard(p1 + p2);
-    positions[22] = calculateCard(p1 + positions[4]);
-    positions[23] = calculateCard(p2 + positions[4]);
-    positions[24] = calculateCard(p2 + positions[5]);
-    positions[25] = calculateCard(p3 + positions[5]);
+    positions['4.1'] = calculateCard(positions[1] + positions[2]);
+    positions[22] = calculateCard(positions[1] + positions[4]);
+    positions[23] = calculateCard(positions[2] + positions[4]);
+    positions[24] = calculateCard(positions[2] + positions[5]);
+    positions[25] = calculateCard(positions[3] + positions[5]);
     positions[26] = calculateCard(positions[4] + positions[6]);
     positions[27] = calculateCard(positions[5] + positions[6]);
     positions[28] = calculateCard(positions[24] + positions[25]);
@@ -285,12 +283,12 @@ function calculateAllPositions(day, month, year) {
 
     // Кармический портрет
     positions['2.1'] = positions[2];
-    positions[9] = calculateCard(Math.abs(p1 - p2));
-    positions[10] = calculateCard(Math.abs(p2 - p3));
+    positions[9] = calculateCard(Math.abs(positions[1] - positions[2]));
+    positions[10] = calculateCard(Math.abs(positions[2] - positions[3]));
     positions[11] = calculateCard(Math.abs(positions[9] - positions[10]));
     positions[15] = calculateCard(positions[9] + positions[10] + positions[11]);
     positions['15.1'] = calculateCard((positions[9] + positions[10] + positions[11]) - positions[7]);
-    positions[16] = calculateCard(p1 + positions[4] + positions[5] + p3);
+    positions[16] = calculateCard(positions[1] + positions[4] + positions[5] + positions[3]);
     positions[17] = calculateCard(positions[11] + positions[6]);
     positions[18] = calculateCard(positions[11] + positions[8]);
 
