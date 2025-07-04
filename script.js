@@ -45,25 +45,32 @@ async function loadMeaningsData(jsonFile) {
 
 // Инициализация календаря (flatpickr)
 function initDatePicker() {
-    flatpickr("#birthDate", {
+    const dateInput = document.getElementById('birthDate');
+    if (!dateInput) {
+        console.error('Элемент birthDate не найден!');
+        return;
+    }
+
+    flatpickr(dateInput, {
         dateFormat: "d.m.Y",
         maxDate: "today",
         locale: "ru",
         allowInput: true,
-        onReady: function(instance) {
-            instance.input.removeAttribute('readonly');
-            instance.input.addEventListener('input', function(e) {
-                // Форматирование ввода ДД.ММ.ГГГГ
-                let value = e.target.value.replace(/[^\d]/g, '');
-                let formatted = '';
-                for (let i = 0; i < value.length; i++) {
-                    if (i === 2 || i === 4) formatted += '.';
-                    formatted += value[i];
-                    if (formatted.length >= 10) break;
-                }
-                e.target.value = formatted;
-                e.target.classList.toggle('error', !isValidDate(formatted));
-            });
+        onReady: function(selectedDates, dateStr, instance) {
+            if (instance?.input) {
+                instance.input.removeAttribute('readonly');
+                instance.input.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/[^\d]/g, '');
+                    let formatted = '';
+                    for (let i = 0; i < value.length; i++) {
+                        if (i === 2 || i === 4) formatted += '.';
+                        formatted += value[i];
+                        if (formatted.length >= 10) break;
+                    }
+                    e.target.value = formatted;
+                    e.target.classList.toggle('error', !isValidDate(formatted));
+                });
+            }
         }
     });
 }
@@ -228,6 +235,23 @@ function getCardMeaning(card, position, spreadType) {
     return meanings[position] || meanings.default || 'Нет описания';
 }
 
+// Функция для вычисления номера карты (аркана) из числа
+function calculateCard(number) {
+    // Приводим к числу на случай если передали строку
+    number = Number(number);
+    
+    // Если число отрицательное - берем модуль
+    number = Math.abs(number);
+    
+    // Для чисел больше 22 (количество Старших Арканов)
+    // Вычисляем сумму цифр пока не получим число от 1 до 22
+    while (number > 22) {
+        number = [...String(number)].reduce((sum, d) => sum + Number(d), 0);
+    }
+    
+    // Если получилось 0 (маловероятно), возвращаем 22 - Шут
+    return number === 0 ? 22 : number;
+}
 function calculateAllPositions(day, month, year) {
     // Основные позиции
     const p1 = calculateCard(day); // День
