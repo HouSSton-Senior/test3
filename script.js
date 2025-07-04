@@ -263,13 +263,13 @@ function calculateAllPositions(day, month, year) {
         1: p1, 2: p2, 3: p3,
         4: calculateCard(p1 + p2),
         5: calculateCard(p2 + p3),
-        6: calculateCard(p4 + p5),
-        7: calculateCard(p1 + p5),
-        8: calculateCard(p2 + p6),
-        12: calculateCard(p7 + p8),
-        13: calculateCard(p1 + p4 + p6),
-        14: calculateCard(p3 + p5 + p6)
+        6: calculateCard(p4 + p5),   
     };
+        positions[7] = calculateCard(p1 + positions[5]);
+        positions[8] = calculateCard(p2 + positions[6]);
+        positions[12] = calculateCard(positions[7] + positions[8]);
+        positions[13] = calculateCard(p1 + positions[4] + positions[6]);
+        positions[14] = calculateCard(p3 + positions[5] + positions[6]);
 
     // Теневой портрет
     positions['4.1'] = calculateCard(p1 + p2);
