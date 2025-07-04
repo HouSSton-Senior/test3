@@ -295,6 +295,9 @@ function calculateAllPositions(day, month, year) {
     positions[18] = calculateCard(positions[11] + positions[8]);
 
     return positions;
+    function calculateCard(num) {
+    return num % 22 || 0;
+    return num % 22 || 22; // Если 0 → возвращаем 22
 }
 
 function isValidDate(dateStr) {
