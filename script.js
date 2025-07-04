@@ -234,10 +234,7 @@ function calculateAllPositions(day, month, year) {
     const p1 = calculateCard(day); // День
     const p2 = calculateCard(month); // Месяц
     const p3 = calculateCard([...String(year)].reduce((sum, d) => sum + Number(d), 0)); // Сумма цифр года
-    const p1 = calculateCard(day);
-    const p2 = calculateCard(month);
-    const p3 = calculateCard([...String(year)].reduce((sum, d) => sum + Number(d), 0));
-
+    
     // Индивидуальный портрет (вычисляем p4, p5, p6 сразу)
     const p4 = calculateCard(p1 + p2);
     const p5 = calculateCard(p2 + p3);
@@ -265,8 +262,6 @@ function calculateAllPositions(day, month, year) {
         21: calculateCard(p1 + p2 + p3 + p4 + p5 + p6)
     };
 
-    // Теневой портрет
-    positions['4.1'] = calculateCard(p1 * p2);
     // Теневой портрет (оставляем дробные индексы)
     positions[4.1] = calculateCard(p1 + p2);
     positions[22] = calculateCard(p1 + positions[4]);
@@ -298,7 +293,6 @@ function calculateAllPositions(day, month, year) {
 }
 
 function calculateCard(num) {
-    return num % 22 || 0;
     return num % 22 || 22; // Если 0 → возвращаем 22
 }
 
