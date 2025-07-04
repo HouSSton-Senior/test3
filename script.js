@@ -253,6 +253,7 @@ function calculateCard(number) {
     return number === 0 ? 22 : number;
 }
 function calculateAllPositions(day, month, year) {
+    const positions = {};
     // Основные позиции
     positions[1] = calculateCard(day); // День
     positions[2] = calculateCard(month); // Месяц
