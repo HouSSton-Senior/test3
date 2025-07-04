@@ -187,6 +187,7 @@ function calculateAllPositions(day, month, year) {
 
     return positions;
     function calculateCard(num) {
+    return num % 22 || 0;
     return num % 22 || 22; // Если 0 → возвращаем 22
     }
 }
