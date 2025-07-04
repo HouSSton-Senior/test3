@@ -21,7 +21,7 @@ function calculateCard(number) {
     while (number > 22) {
         number = [...String(number)].reduce((sum, d) => sum + Number(d), 0);
     }
-    // Теперь 22 → 0, но в расчетах 22 остается 22
+    // Возвращаем 0 для Шута (22 → 0), остальные числа как есть
     return number === 22 ? 0 : number;
 }
 
@@ -185,11 +185,7 @@ function calculateAllPositions(day, month, year) {
     positions[17] = calculateCard(positions[11] + positions[6]);
     positions[18] = calculateCard(positions[11] + positions[8]);
 
-    return positions;
-    function calculateCard(num) {
-    return num % 22 || 0;
-    return num % 22 || 22; // Если 0 → возвращаем 22
-    }
+    return positions;    
 }
 
 // Расчёт портрета
@@ -227,7 +223,10 @@ function createCardsLayout(spreadType, positions) {
     const cardsGrid = resultSection.querySelector('.cards-grid');
     
     getCardDefinitions(spreadType).forEach(cardDef => {
-        const cardNum = positions[cardDef.position] || 0;
+        let cardNum = positions[cardDef.position] || 0;
+        // Для отображения: если cardNum === 0 (Шут), показываем 22
+        const displayNum = cardNum === 0 ? 22 : cardNum;
+        
         const baseCard = arcanaBaseData.find(c => c.id === cardNum) || {};
         const meaningsCard = arcanaMeaningsData.find(c => c.id === cardNum) || {};
         const meaning = getCardMeaning(meaningsCard, cardDef.position, spreadType);
@@ -241,7 +240,7 @@ function createCardsLayout(spreadType, positions) {
                 </div>
                 <button class="toggle-description">Показать описание</button>
                 <div class="arcana-result">
-                    <h4>${baseCard.name || 'Неизвестно'} <span class="arcana-number">${cardNum}</span></h4>
+                    <h4>${baseCard.name || 'Неизвестно'} <span class="arcana-number">${displayNum}</span></h4>
                     <p class="arcana-meaning"><strong>${meaning}</strong></p>
                     ${spreadType === 'shadow' ? 
                         `<p class="shadow-aspect"><em>Теневая сторона: ${meaningsCard.meanings?.shadow?.default || 'нет информации'}</em></p>` : ''}
@@ -310,7 +309,6 @@ const cardDefinitions = {
             { position: '18', title: '18. Работа с Миссией.', description: 'Как выполнить миссию в этой жизни', fullDescription: 'Позиция 1 - Базовая энергия.' }
         ]
     };
-    
     return cardDefinitions[spreadType] || [];
 }
 
