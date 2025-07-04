@@ -9,7 +9,7 @@ let currentJsonFile = 'ind.json';
 document.addEventListener('DOMContentLoaded', async function() {
     // 1. Загружаем базовые названия арканов
     await loadBaseData();
-
+    
     // 2. Настраиваем календарь и обработчики
     initDatePicker();
     setupEventListeners();
@@ -45,21 +45,25 @@ async function loadMeaningsData(jsonFile) {
 
 // Инициализация календаря (flatpickr)
 function initDatePicker() {
-    const dateInput = document.getElementById('birthDate');
-    if (!dateInput) {
-        console.error('Элемент #birthDate не найден!');
-        return;
-    }
-
-    flatpickr(dateInput, {
+    flatpickr("#birthDate", {
         dateFormat: "d.m.Y",
         maxDate: "today",
         locale: "ru",
         allowInput: true,
         onReady: function(instance) {
-            if (instance.input) {
-                instance.input.removeAttribute('readonly');
-            }
+            instance.input.removeAttribute('readonly');
+            instance.input.addEventListener('input', function(e) {
+                // Форматирование ввода ДД.ММ.ГГГГ
+                let value = e.target.value.replace(/[^\d]/g, '');
+                let formatted = '';
+                for (let i = 0; i < value.length; i++) {
+                    if (i === 2 || i === 4) formatted += '.';
+                    formatted += value[i];
+                    if (formatted.length >= 10) break;
+                }
+                e.target.value = formatted;
+                e.target.classList.toggle('error', !isValidDate(formatted));
+            });
         }
     });
 }
@@ -71,13 +75,13 @@ function setupEventListeners() {
         card.addEventListener('click', async function() {
             document.querySelectorAll('.spread-card').forEach(c => c.classList.remove('active'));
             this.classList.add('active');
-
+            
             currentSpreadType = this.getAttribute('data-spread');
             currentJsonFile = this.getAttribute('data-json');
             updateTitle(currentSpreadType);
-
+            
             await loadMeaningsData(currentJsonFile);
-
+            
             // Перерасчёт, если дата уже введена
             const birthDate = document.getElementById('birthDate').value;
             if (birthDate && isValidDate(birthDate)) {
@@ -88,7 +92,7 @@ function setupEventListeners() {
 
     // Кнопка "Рассчитать"
     document.getElementById('calculateBtn')?.addEventListener('click', calculatePortrait);
-
+    
     // Обработка Enter в поле даты
     document.getElementById('birthDate')?.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') calculatePortrait();
@@ -99,9 +103,9 @@ function setupEventListeners() {
 async function calculatePortrait() {
     const btn = document.getElementById('calculateBtn');
     if (!btn) return;
-
+    
     btn.classList.add('loading');
-
+    
     try {
         const dateStr = document.getElementById('birthDate').value;
         if (!dateStr || !isValidDate(dateStr)) {
@@ -111,13 +115,8 @@ async function calculatePortrait() {
 
         const [day, month, year] = dateStr.split('.').map(Number);
         const positions = calculateAllPositions(day, month, year);
-
-        console.log("Текущий тип портрета:", currentSpreadType); // вот эти 3 строчки потом удалить
-        console.log("Рассчитанные позиции:", positions);            // вот эти 3 строчки потом удалить
-        console.log("Загруженные данные:", arcanaMeaningsData);            // вот эти 3 строчки потом удалить
-
         createCardsLayout(currentSpreadType, positions);
-
+        
     } catch (error) {
         console.error('Ошибка расчёта:', error);
         alert('Ошибка при расчёте портрета');
@@ -127,19 +126,19 @@ async function calculatePortrait() {
 }
 
 // Создание карточек на странице
-function createCardsLayout(currentSpreadType, positions) {
+function createCardsLayout(spreadType, positions) {
     const resultSection = document.getElementById('result');
     if (!resultSection) return;
-
+    
     resultSection.innerHTML = '<div class="cards-grid"></div>';
     const cardsGrid = resultSection.querySelector('.cards-grid');
-
-    getCardDefinitions(currentSpreadType).forEach(cardDef => {
+    
+    getCardDefinitions(spreadType).forEach(cardDef => {
         const cardNum = positions[cardDef.position] || 0;
         const baseCard = arcanaBaseData.find(c => c.id === cardNum) || {};
         const meaningsCard = arcanaMeaningsData.find(c => c.id === cardNum) || {};
-        const meaning = getCardMeaning(meaningsCard, cardDef.position, currentSpreadType);
-
+        const meaning = getCardMeaning(meaningsCard, cardDef.position, spreadType);
+        
         const cardHTML = `
             <div class="card" id="pos${cardDef.position}-card">
                 <h3>${cardDef.title}</h3>
@@ -151,12 +150,12 @@ function createCardsLayout(currentSpreadType, positions) {
                 <div class="arcana-result">
                     <h4>${baseCard.name || 'Неизвестно'} <span class="arcana-number">${cardNum}</span></h4>
                     <p class="arcana-meaning"><strong>${meaning}</strong></p>
-                    ${currentSpreadType === 'shadow' ? 
+                    ${spreadType === 'shadow' ? 
                         `<p class="shadow-aspect"><em>Теневая сторона: ${meaningsCard.meanings?.shadow?.default || 'нет информации'}</em></p>` : ''}
                 </div>
             </div>
         `;
-
+        
         cardsGrid.insertAdjacentHTML('beforeend', cardHTML);
     });
 
@@ -176,8 +175,8 @@ function createCardsLayout(currentSpreadType, positions) {
 }
 
 // Ваши заполненные карточки (оставьте без изменений!)
-function getCardDefinitions(currentSpreadType) {
-    const cardDefinitions = {
+function getCardDefinitions(spreadType) {
+const cardDefinitions = {
         individual: [
             { position: '1', title: '1. Детство и Юность (до 25 лет)', description: 'Базовая энергия', fullDescription: 'Позиция 1 - Базовая энергия.' },
             { position: '2', title: '2. Зрелость (25-40 лет)', description: 'Ключевой жизненный урок этого периода', fullDescription: 'Позиция 2 - Зрелость (25-40 лет). Уроки и Задачи этого воплощения.' },
@@ -218,14 +217,14 @@ function getCardDefinitions(currentSpreadType) {
             { position: '18', title: '18. Работа с Миссией.', description: 'Как выполнить миссию в этой жизни', fullDescription: 'Позиция 1 - Базовая энергия.' }
         ]
     };
-
-    return cardDefinitions[currentSpreadType] || []; // ← ТОЛЬКО ЭТУ СТРОКУ ИЗМЕНИЛИ
+    
+    return cardDefinitions[spreadType] || [];
 }
 
 // Остальные функции (без изменений)
-function getCardMeaning(card, position, currentSpreadType) {
-    if (!card?.meanings?.[currentSpreadType]) return 'Нет данных';
-    const meanings = card.meanings[currentSpreadType];
+function getCardMeaning(card, position, spreadType) {
+    if (!card?.meanings?.[spreadType]) return 'Нет данных';
+    const meanings = card.meanings[spreadType];
     return meanings[position] || meanings.default || 'Нет описания';
 }
 
@@ -234,11 +233,6 @@ function calculateAllPositions(day, month, year) {
     const p1 = calculateCard(day); // День
     const p2 = calculateCard(month); // Месяц
     const p3 = calculateCard([...String(year)].reduce((sum, d) => sum + Number(d), 0)); // Сумма цифр года
-    
-    // Индивидуальный портрет (вычисляем p4, p5, p6 сразу)
-    const p4 = calculateCard(p1 + p2);
-    const p5 = calculateCard(p2 + p3);
-    const p6 = calculateCard(p4 + p5);
 
     // Индивидуальный портрет
     const positions = {
@@ -251,19 +245,10 @@ function calculateAllPositions(day, month, year) {
         12: calculateCard(p1 + p2 - p3),
         13: calculateCard(p1 + p3 - p2),
         14: calculateCard(p2 + p3 - p1)
-        4.1: p4, 5: p5, 6: p6,
-        7: calculateCard(p1 + p5),
-        8: calculateCard(p2 + p6),
-        12: calculateCard(positions[7] + positions[8]),
-        13: calculateCard(p1 + p4 + p6),
-        14: calculateCard(p3 + p5 + p6),
-        19: calculateCard(p4 + p6),
-        20: calculateCard(p5 + p6),
-        21: calculateCard(p1 + p2 + p3 + p4 + p5 + p6)
     };
 
-    // Теневой портрет (оставляем дробные индексы)
-    positions[4.1] = calculateCard(p1 + p2);
+    // Теневой портрет
+    positions['4.1'] = calculateCard(p1 * p2);
     positions[22] = calculateCard(p1 + positions[4]);
     positions[23] = calculateCard(p2 + positions[4]);
     positions[24] = calculateCard(p2 + positions[5]);
@@ -272,28 +257,20 @@ function calculateAllPositions(day, month, year) {
     positions[27] = calculateCard(positions[5] + positions[6]);
     positions[28] = calculateCard(positions[24] + positions[25]);
     positions['28.1'] = calculateCard(positions[23] + positions[27]);
-    positions[28.1] = calculateCard(positions[23] + positions[27]);
     positions[29] = calculateCard(positions[22] + positions[26]);
 
     // Кармический портрет
     positions['2.1'] = month > 12 ? month - 12 : month;
-    positions[2.1] = (month % 12) || 12; // Если month=0 → 12, month=13 → 1
     positions[9] = calculateCard(Math.abs(p1 - p2));
     positions[10] = calculateCard(Math.abs(p2 - p3));
     positions[11] = calculateCard(Math.abs(positions[9] - positions[10]));
     positions[15] = calculateCard(positions[9] + positions[10] + positions[11] - positions[7]);
     positions['15.1'] = calculateCard(positions[11] - positions[13]);
-    positions[15] = calculateCard(positions[9] + positions[10] + positions[11]);
-    positions[15.1] = calculateCard((positions[9] + positions[10] + positions[11]) - positions[7]);
     positions[16] = calculateCard(p1 + positions[4] + positions[5] + p3);
     positions[17] = calculateCard(positions[11] + positions[6]);
     positions[18] = calculateCard(positions[11] + positions[8]);
 
     return positions;
-}
-
-function calculateCard(num) {
-    return num % 22 || 22; // Если 0 → возвращаем 22
 }
 
 function isValidDate(dateStr) {
