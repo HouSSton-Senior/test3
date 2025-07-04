@@ -174,8 +174,10 @@ function createCardsLayout(spreadType, positions) {
     });
 }
 
+
 // Ваши заполненные карточки (оставьте без изменений!)
-const cardDefinitions = {
+function getCardDefinitions(spreadType) {
+    const cardDefinitions = {
         individual: [
             { position: '1', title: '1. Детство и Юность (до 25 лет)', description: 'Базовая энергия', fullDescription: 'Позиция 1 - Базовая энергия.' },
             { position: '2', title: '2. Зрелость (25-40 лет)', description: 'Ключевой жизненный урок этого периода', fullDescription: 'Позиция 2 - Зрелость (25-40 лет). Уроки и Задачи этого воплощения.' },
