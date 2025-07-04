@@ -266,7 +266,7 @@ function calculateAllPositions(day, month, year) {
     positions[29] = calculateCard(positions[22] + positions[26]);
 
     // Кармический портрет
-    positions[2.1] = (month % 12) || 12; // Если month=0 → 12, month=13 → 1
+    positions[2.1] = p2;
     positions[9] = calculateCard(Math.abs(p1 - p2));
     positions[10] = calculateCard(Math.abs(p2 - p3));
     positions[11] = calculateCard(Math.abs(positions[9] - positions[10]));
