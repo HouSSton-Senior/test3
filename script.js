@@ -111,6 +111,9 @@ async function calculatePortrait() {
 
         const [day, month, year] = dateStr.split('.').map(Number);
         const positions = calculateAllPositions(day, month, year);
+         console.log("Текущий тип портрета:", currentSpreadType);
+    console.log("Рассчитанные позиции:", positions);
+    console.log("Загруженные данные:", arcanaMeaningsData);
         createCardsLayout(currentSpreadType, positions);
         
     } catch (error) {
