@@ -221,89 +221,65 @@ const cardDefinitions = {
 }
 
 // Остальные функции (без изменений)
-function getCardMeaning(card, position, spreadType) {
-    if (!card?.meanings?.[spreadType]) return 'Нет данных';
-    const meanings = card.meanings[spreadType];
-    return meanings[position] || meanings.default || 'Нет описания';
-}
-
 function calculateAllPositions(day, month, year) {
-  function calculateAllPositions(day, month, year) {
-    // 1. Валидация входных данных
-    day = Math.abs(Number(day)) || 1;
-    month = Math.abs(Number(month)) || 1;
-    year = Math.abs(Number(year)) || 2000;
+    // 1. Валидация и базовые расчёты
+    const validatedDay = Math.abs(Number(day)) || 1;
+    const validatedMonth = Math.abs(Number(month)) || 1;
+    const validatedYear = Math.abs(Number(year)) || 2000;
 
-    // 2. Базовые позиции
-    const p1 = calculateCard(day);
-    const p2 = calculateCard(month);
-    const p3 = calculateCard([...String(year)].reduce((sum, d) => sum + Number(d), 0));
-
-    // 3. Основные комбинации
+    // 2. Вычисляем ВСЕ необходимые значения последовательно
+    const p1 = calculateCard(validatedDay);
+    const p2 = calculateCard(validatedMonth);
+    const p3 = calculateCard([...String(validatedYear)].reduce((sum, d) => sum + Number(d), 0));
+    
+    // 3. Вычисляем все зависимые позиции
     const p4 = calculateCard(p1 + p2);
     const p5 = calculateCard(p2 + p3);
     const p6 = calculateCard(p4 + p5);
     const p7 = calculateCard(p1 + p5);
     const p8 = calculateCard(p2 + p6);
-
-    // 4. Дополнительные позиции
-    const p12 = calculateCard(p7 + p8);
-    const p13 = calculateCard(p1 + p4 + p6);
-    const p14 = calculateCard(p3 + p5 + p6);
-    const p19 = calculateCard(p4 + p6);
-    const p20 = calculateCard(p5 + p6);
-    const p21 = calculateCard(p1 + p2 + p3 + p4 + p5 + p6);
-
-    // 5. Теневой портрет
-    const p4_1 = calculateCard(p1 + p2);
-    const p22 = calculateCard(p1 + p4);
-    const p23 = calculateCard(p2 + p4);
-    const p24 = calculateCard(p2 + p5);
-    const p25 = calculateCard(p3 + p5);
-    const p26 = calculateCard(p4 + p6);
-    const p27 = calculateCard(p5 + p6);
-    const p28 = calculateCard(p24 + p25);
-    const p28_1 = calculateCard(p23 + p27);
-    const p29 = calculateCard(p22 + p26);
-
-    // 6. Кармический портрет
-    const p2_1 = p2;
     const p9 = calculateCard(Math.abs(p1 - p2));
     const p10 = calculateCard(Math.abs(p2 - p3));
     const p11 = calculateCard(Math.abs(p9 - p10));
-    const p15 = calculateCard(p9 + p10 + p11);
-    const p15_1 = calculateCard((p9 + p10 + p11) - p7);
-    const p16 = calculateCard(p1 + p4 + p5 + p3);
-    const p17 = calculateCard(p11 + p6);
-    const p18 = calculateCard(p11 + p8);
-
-    // 7. Собираем все позиции в объект
+    
+    // 4. Собираем финальный объект
     return {
         // Индивидуальный портрет
         1: p1, 2: p2, 3: p3, 4: p4, 5: p5, 6: p6,
-        7: p7, 8: p8, 12: p12, 13: p13, 14: p14,
-        19: p19, 20: p20, 21: p21,
+        7: p7, 8: p8,
+        12: calculateCard(p7 + p8),
+        13: calculateCard(p1 + p4 + p6),
+        14: calculateCard(p3 + p5 + p6),
+        19: calculateCard(p4 + p6),
+        20: calculateCard(p5 + p6),
+        21: calculateCard(p1 + p2 + p3 + p4 + p5 + p6),
         
         // Теневой портрет
-        '4.1': p4_1, 22: p22, 23: p23, 24: p24,
-        25: p25, 26: p26, 27: p27, 28: p28,
-        '28.1': p28_1, 29: p29,
+        '4.1': calculateCard(p1 + p2),
+        22: calculateCard(p1 + p4),
+        23: calculateCard(p2 + p4),
+        24: calculateCard(p2 + p5),
+        25: calculateCard(p3 + p5),
+        26: calculateCard(p4 + p6),
+        27: calculateCard(p5 + p6),
+        28: calculateCard(p24 + p25),
+        '28.1': calculateCard(p23 + p27),
+        29: calculateCard(p22 + p26),
         
         // Кармический портрет
-        '2.1': p2_1, 9: p9, 10: p10, 11: p11,
-        15: p15, '15.1': p15_1, 16: p16,
-        17: p17, 18: p18
+        '2.1': p2,
+        9: p9, 10: p10, 11: p11,
+        15: calculateCard(p9 + p10 + p11),
+        '15.1': calculateCard((p9 + p10 + p11) - p7),
+        16: calculateCard(p1 + p4 + p5 + p3),
+        17: calculateCard(p11 + p6),
+        18: calculateCard(p11 + p8)
     };
 }
 
 function calculateCard(num) {
     const result = num % 22;
     return result === 0 ? 22 : result;
-}
-}
-
-function calculateCard(num) {
-    return num % 22 || 0;
 }
 
 function isValidDate(dateStr) {
