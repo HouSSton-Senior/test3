@@ -15,6 +15,39 @@ document.addEventListener('DOMContentLoaded', async function() {
     setupEventListeners();
 });
 
+// 1. Вспомогательные функции
+function calculateCard(number) {
+    // Приводим к числу на случай если передали строку
+    number = Number(number);
+    
+    // Если число отрицательное - берем модуль
+    number = Math.abs(number);
+    
+    // Для чисел больше 22 (количество Старших Арканов)
+    // Вычисляем сумму цифр пока не получим число от 1 до 22
+    while (number > 22) {
+        number = [...String(number)].reduce((sum, d) => sum + Number(d), 0);
+    }
+    
+    // Если получилось 0 (маловероятно), возвращаем 22 - Шут
+    return number === 0 ? 22 : number;
+}
+
+function isValidDate(dateStr) {
+    const [d, m, y] = dateStr.split('.').map(Number);
+    const date = new Date(y, m-1, d);
+    return date.getDate() === d && date.getMonth() === m-1 && date.getFullYear() === y;
+}
+
+function getCardMeaning(card, position, spreadType) {
+    if (!card?.meanings?.[spreadType]) return 'Нет данных';
+    const meanings = card.meanings[spreadType];
+    return meanings[position] || meanings.default || 'Нет описания';
+}
+
+
+// 2. Функции загрузки данных
+
 // Загрузка base.json
 async function loadBaseData() {
     try {
@@ -43,6 +76,8 @@ async function loadMeaningsData(jsonFile) {
     }
 }
 
+
+// 3. Функции работы с интерфейсом
 // Инициализация календаря (flatpickr)
 function initDatePicker() {
     const dateInput = document.getElementById('birthDate');
@@ -104,6 +139,64 @@ function setupEventListeners() {
     document.getElementById('birthDate')?.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') calculatePortrait();
     });
+}
+
+function updateTitle(spreadType) {
+    const titles = {
+        individual: '🔮 Индивидуальный портрет',
+        shadow: '🌑 Теневой портрет',
+        karma: '🔄 Кармический портрет'
+    };
+    document.querySelector('.container h1').textContent = titles[spreadType] || titles.individual;
+}
+
+// 4. Основные функции расчета
+// Функция для вычисления номера карты (аркана) из числа
+function calculateAllPositions(day, month, year) {
+    const positions = {};
+    // Основные позиции
+    positions[1] = calculateCard(day); // День
+    positions[2] = calculateCard(month); // Месяц
+    positions[3] = calculateCard([...String(year)].reduce((sum, d) => sum + Number(d), 0)); // Сумма цифр года
+
+    // Индивидуальный портрет
+    // производные 4-14
+    positions[4] = calculateCard(positions[1] + positions[2]);
+    positions[5] = calculateCard(positions[2] + positions[3]);
+    positions[6] = calculateCard(positions[1] + positions[3]);
+    positions[7] = calculateCard(positions[1] + positions[5]);
+    positions[8] = calculateCard(positions[2] + positions[6]);
+    positions[12] = calculateCard(positions[7] + positions[8]);
+    positions[13] = calculateCard(positions[1] + positions[4] + positions[6]);
+    positions[14] = calculateCard(positions[3] + positions[5] + positions[6]);
+
+    // Теневой портрет
+    positions['4.1'] = calculateCard(positions[1] + positions[2]);
+    positions[22] = calculateCard(positions[1] + positions[4]);
+    positions[23] = calculateCard(positions[2] + positions[4]);
+    positions[24] = calculateCard(positions[2] + positions[5]);
+    positions[25] = calculateCard(positions[3] + positions[5]);
+    positions[26] = calculateCard(positions[4] + positions[6]);
+    positions[27] = calculateCard(positions[5] + positions[6]);
+    positions[28] = calculateCard(positions[24] + positions[25]);
+    positions['28.1'] = calculateCard(positions[23] + positions[27]);
+    positions[29] = calculateCard(positions[22] + positions[26]);
+
+    // Кармический портрет
+    positions['2.1'] = positions[2];
+    positions[9] = calculateCard(Math.abs(positions[1] - positions[2]));
+    positions[10] = calculateCard(Math.abs(positions[2] - positions[3]));
+    positions[11] = calculateCard(Math.abs(positions[9] - positions[10]));
+    positions[15] = calculateCard(positions[9] + positions[10] + positions[11]);
+    positions['15.1'] = calculateCard((positions[9] + positions[10] + positions[11]) - positions[7]);
+    positions[16] = calculateCard(positions[1] + positions[4] + positions[5] + positions[3]);
+    positions[17] = calculateCard(positions[11] + positions[6]);
+    positions[18] = calculateCard(positions[11] + positions[8]);
+
+    return positions;
+    function calculateCard(num) {
+    return num % 22 || 22; // Если 0 → возвращаем 22
+    }
 }
 
 // Расчёт портрета
@@ -229,88 +322,10 @@ const cardDefinitions = {
 }
 
 // Остальные функции (без изменений)
-function getCardMeaning(card, position, spreadType) {
-    if (!card?.meanings?.[spreadType]) return 'Нет данных';
-    const meanings = card.meanings[spreadType];
-    return meanings[position] || meanings.default || 'Нет описания';
-}
 
-// Функция для вычисления номера карты (аркана) из числа
-function calculateCard(number) {
-    // Приводим к числу на случай если передали строку
-    number = Number(number);
-    
-    // Если число отрицательное - берем модуль
-    number = Math.abs(number);
-    
-    // Для чисел больше 22 (количество Старших Арканов)
-    // Вычисляем сумму цифр пока не получим число от 1 до 22
-    while (number > 22) {
-        number = [...String(number)].reduce((sum, d) => sum + Number(d), 0);
-    }
-    
-    // Если получилось 0 (маловероятно), возвращаем 22 - Шут
-    return number === 0 ? 22 : number;
-}
-function calculateAllPositions(day, month, year) {
-    const positions = {};
-    // Основные позиции
-    positions[1] = calculateCard(day); // День
-    positions[2] = calculateCard(month); // Месяц
-    positions[3] = calculateCard([...String(year)].reduce((sum, d) => sum + Number(d), 0)); // Сумма цифр года
 
-    // Индивидуальный портрет
-    // производные 4-14
-    positions[4] = calculateCard(positions[1] + positions[2]);
-    positions[5] = calculateCard(positions[2] + positions[3]);
-    positions[6] = calculateCard(positions[1] + positions[3]);
-    positions[7] = calculateCard(positions[1] + positions[5]);
-    positions[8] = calculateCard(positions[2] + positions[6]);
-    positions[12] = calculateCard(positions[7] + positions[8]);
-    positions[13] = calculateCard(positions[1] + positions[4] + positions[6]);
-    positions[14] = calculateCard(positions[3] + positions[5] + positions[6]);
 
-    // Теневой портрет
-    positions['4.1'] = calculateCard(positions[1] + positions[2]);
-    positions[22] = calculateCard(positions[1] + positions[4]);
-    positions[23] = calculateCard(positions[2] + positions[4]);
-    positions[24] = calculateCard(positions[2] + positions[5]);
-    positions[25] = calculateCard(positions[3] + positions[5]);
-    positions[26] = calculateCard(positions[4] + positions[6]);
-    positions[27] = calculateCard(positions[5] + positions[6]);
-    positions[28] = calculateCard(positions[24] + positions[25]);
-    positions['28.1'] = calculateCard(positions[23] + positions[27]);
-    positions[29] = calculateCard(positions[22] + positions[26]);
 
-    // Кармический портрет
-    positions['2.1'] = positions[2];
-    positions[9] = calculateCard(Math.abs(positions[1] - positions[2]));
-    positions[10] = calculateCard(Math.abs(positions[2] - positions[3]));
-    positions[11] = calculateCard(Math.abs(positions[9] - positions[10]));
-    positions[15] = calculateCard(positions[9] + positions[10] + positions[11]);
-    positions['15.1'] = calculateCard((positions[9] + positions[10] + positions[11]) - positions[7]);
-    positions[16] = calculateCard(positions[1] + positions[4] + positions[5] + positions[3]);
-    positions[17] = calculateCard(positions[11] + positions[6]);
-    positions[18] = calculateCard(positions[11] + positions[8]);
 
-    return positions;
-    function calculateCard(num) {
-    return num % 22 || 0;
-    return num % 22 || 22; // Если 0 → возвращаем 22
-    }
-}
 
-function isValidDate(dateStr) {
-    const [d, m, y] = dateStr.split('.').map(Number);
-    const date = new Date(y, m-1, d);
-    return date.getDate() === d && date.getMonth() === m-1 && date.getFullYear() === y;
-}
 
-function updateTitle(spreadType) {
-    const titles = {
-        individual: '🔮 Индивидуальный портрет',
-        shadow: '🌑 Теневой портрет',
-        karma: '🔄 Кармический портрет'
-    };
-    document.querySelector('.container h1').textContent = titles[spreadType] || titles.individual;
-}
