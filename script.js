@@ -1,4 +1,7 @@
 // Глобальные переменные
+console.log('Скрипт начал выполнение');
+console.log('Скрипт полностью загружен');
+
 let arcanaBaseData = []; // Данные из base.json
 let arcanaMeaningsData = []; // Данные из ind.json/shadow.json/karma.json
 let currentDay, currentMonth, currentYear;
@@ -176,7 +179,7 @@ function createCardsLayout(spreadType, positions) {
 
 // Ваши заполненные карточки (оставьте без изменений!)
 function getCardDefinitions(spreadType) {
-const cardDefinitions = {
+    const cardDefinitions = {
         individual: [
             { position: '1', title: '1. Детство и Юность (до 25 лет)', description: 'Базовая энергия', fullDescription: 'Позиция 1 - Базовая энергия.' },
             { position: '2', title: '2. Зрелость (25-40 лет)', description: 'Ключевой жизненный урок этого периода', fullDescription: 'Позиция 2 - Зрелость (25-40 лет). Уроки и Задачи этого воплощения.' },
@@ -220,7 +223,6 @@ const cardDefinitions = {
     
     return cardDefinitions[spreadType] || [];
 }
-
 // Остальные функции (без изменений)
 function getCardMeaning(card, position, spreadType) {
     if (!card?.meanings?.[spreadType]) return 'Нет данных';
@@ -271,6 +273,43 @@ function calculateAllPositions(day, month, year) {
     positions[18] = calculateCard(positions[11] + positions[8]);
 
     return positions;
+    async function calculatePortrait() {
+    const btn = document.getElementById('calculateBtn');
+    if (!btn) {
+        console.error('Кнопка "Рассчитать" не найдена!');
+        return;
+    }
+    
+    btn.classList.add('loading');
+    
+    try {
+        // Проверка загруженных данных
+        if (!arcanaBaseData.length || !arcanaMeaningsData.length) {
+            console.log('Данные:', {
+                arcanaBaseData: arcanaBaseData.length,
+                arcanaMeaningsData: arcanaMeaningsData.length
+            });
+            throw new Error('Данные карт не загружены!');
+        }
+
+        const dateStr = document.getElementById('birthDate').value;
+        if (!dateStr || !isValidDate(dateStr)) {
+            throw new Error('Неверный формат даты. Используйте ДД.ММ.ГГГГ');
+        }
+
+        const [day, month, year] = dateStr.split('.').map(Number);
+        const positions = calculateAllPositions(day, month, year);
+        
+        console.log('Рассчитанные позиции:', positions); // Логируем результат
+        
+        createCardsLayout(currentSpreadType, positions);
+        
+    } catch (error) {
+        console.error('Ошибка в calculatePortrait:', error);
+        alert(error.message);
+    } finally {
+        btn.classList.remove('loading');
+    }
 }
 
 function isValidDate(dateStr) {
