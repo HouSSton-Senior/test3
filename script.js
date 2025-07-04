@@ -230,30 +230,31 @@ function getCardMeaning(card, position, currentSpreadType) {
 }
 
 function calculateAllPositions(day, month, year) {
-    // Основные позиции
+    // 1. Основные позиции
     const p1 = calculateCard(day);
     const p2 = calculateCard(month);
     const p3 = calculateCard([...String(year)].reduce((sum, d) => sum + Number(d), 0));
-
-    // Индивидуальный портрет (вычисляем p4, p5, p6 сразу)
     const p4 = calculateCard(p1 + p2);
     const p5 = calculateCard(p2 + p3);
     const p6 = calculateCard(p4 + p5);
 
+    // 2. Индивидуальный портрет (базовые поля)
     const positions = {
         1: p1, 2: p2, 3: p3,
         4: p4, 5: p5, 6: p6,
         7: calculateCard(p1 + p5),
         8: calculateCard(p2 + p6),
-        12: calculateCard(positions[7] + positions[8]),
-        13: calculateCard(p1 + p4 + p6),
-        14: calculateCard(p3 + p5 + p6),
-        19: calculateCard(p4 + p6),
-        20: calculateCard(p5 + p6),
-        21: calculateCard(p1 + p2 + p3 + p4 + p5 + p6)
     };
 
-    // Теневой портрет (оставляем дробные индексы)
+    // 3. Добавляем зависимые поля
+    positions[12] = calculateCard(positions[7] + positions[8]);
+    positions[13] = calculateCard(p1 + p4 + p6);
+    positions[14] = calculateCard(p3 + p5 + p6);
+    positions[19] = calculateCard(p4 + p6);
+    positions[20] = calculateCard(p5 + p6);
+    positions[21] = calculateCard(p1 + p2 + p3 + p4 + p5 + p6);
+
+    // 4. Теневой портрет
     positions[4.1] = calculateCard(p1 + p2);
     positions[22] = calculateCard(p1 + positions[4]);
     positions[23] = calculateCard(p2 + positions[4]);
@@ -265,8 +266,8 @@ function calculateAllPositions(day, month, year) {
     positions[28.1] = calculateCard(positions[23] + positions[27]);
     positions[29] = calculateCard(positions[22] + positions[26]);
 
-    // Кармический портрет
-    positions[2.1] = p2;
+    // 5. Кармический портрет
+    positions[2.1] = p2; // Теперь 2.1 = p2 (значение позиции 2)
     positions[9] = calculateCard(Math.abs(p1 - p2));
     positions[10] = calculateCard(Math.abs(p2 - p3));
     positions[11] = calculateCard(Math.abs(positions[9] - positions[10]));
@@ -277,6 +278,10 @@ function calculateAllPositions(day, month, year) {
     positions[18] = calculateCard(positions[11] + positions[8]);
 
     return positions;
+}
+
+function calculateCard(num) {
+    return num % 22 || 22; // Если 0 → возвращаем 22
 }
 
 function calculateCard(num) {
