@@ -180,31 +180,6 @@ function getCardDefinitions(currentSpreadType) {
     const cardDefinitions = {
         individual: [
             { position: '1', title: '1. Детство и Юность (до 25 лет)', description: 'Базовая энергия', fullDescription: 'Позиция 1 - Базовая энергия.' },
-            // ... остальные карточки индивидуального портрета
-        ],
-        shadow: [
-            { position: '4.1', title: '4.1 Детские травмы', description: 'Ключевые события', fullDescription: 'Описание...' },
-            // ... остальные карточки теневого портрета
-        ],
-        karma: [
-            { position: '2.1', title: '2.1 Кармический урок', description: 'Задачи из прошлого', fullDescription: 'Описание...' },
-            // ... остальные карточки кармического портрета
-        ]
-    };
-    return cardDefinitions[currentSpreadType] || [];
-}
-
-// Остальные функции (без изменений)
-function getCardMeaning(card, position, currentSpreadType) {
-    if (!card?.meanings?.[currentSpreadType]) return 'Нет данных';
-    const meanings = card.meanings[currentSpreadType];
-    return meanings[position] || meanings.default || 'Нет описания';
-}
-
-function calculateAllPositions(day, month, year) {
-  const cardDefinitions = {
-        individual: [
-            { position: '1', title: '1. Детство и Юность (до 25 лет)', description: 'Базовая энергия', fullDescription: 'Позиция 1 - Базовая энергия.' },
             { position: '2', title: '2. Зрелость (25-40 лет)', description: 'Ключевой жизненный урок этого периода', fullDescription: 'Позиция 2 - Зрелость (25-40 лет). Уроки и Задачи этого воплощения.' },
             { position: '3', title: '3. Мудрость (40+ лет) Экзамен.', description: 'Итоговая мудрость и духовные достижения', fullDescription: 'Позиция 3 - Мудрость (40+ лет). Этот период связан с подведением итогов, передачей опыта и осмыслением прожитой жизни.' },
             { position: '4', title: '4. Подсознание, страхи и комплексы', description: 'Детские травмы и ограничивающие установки', fullDescription: 'Позиция 4 - Проблемная зона детства. Показывает основные трудности, с которыми вы столкнулись в детстве, и ограничивающие убеждения, сформированные в этот период. Эти проблемы могут влиять на вашу взрослую жизнь, пока вы не осознаете и не проработаете их' },
@@ -245,6 +220,58 @@ function calculateAllPositions(day, month, year) {
     };
     
     return cardDefinitions[currentSpreadType] || []; // ← ТОЛЬКО ЭТУ СТРОКУ ИЗМЕНИЛИ
+}
+
+// Остальные функции (без изменений)
+function getCardMeaning(card, position, currentSpreadType) {
+    if (!card?.meanings?.[currentSpreadType]) return 'Нет данных';
+    const meanings = card.meanings[currentSpreadType];
+    return meanings[position] || meanings.default || 'Нет описания';
+}
+
+function calculateAllPositions(day, month, year) {
+    // Основные позиции
+    const p1 = calculateCard(day); // День
+    const p2 = calculateCard(month); // Месяц
+    const p3 = calculateCard([...String(year)].reduce((sum, d) => sum + Number(d), 0)); // Сумма цифр года
+
+    // Индивидуальный портрет
+    const positions = {
+        1: p1, 2: p2, 3: p3,
+        4: calculateCard(p1 + p2),
+        5: calculateCard(p2 + p3),
+        6: calculateCard(p1 + p3),
+        7: calculateCard(p1 + p2 + p3),
+        8: calculateCard(p1 * 2 + p2),
+        12: calculateCard(p1 + p2 - p3),
+        13: calculateCard(p1 + p3 - p2),
+        14: calculateCard(p2 + p3 - p1)
+    };
+
+    // Теневой портрет
+    positions['4.1'] = calculateCard(p1 * p2);
+    positions[22] = calculateCard(p1 + positions[4]);
+    positions[23] = calculateCard(p2 + positions[4]);
+    positions[24] = calculateCard(p2 + positions[5]);
+    positions[25] = calculateCard(p3 + positions[5]);
+    positions[26] = calculateCard(positions[4] + positions[6]);
+    positions[27] = calculateCard(positions[5] + positions[6]);
+    positions[28] = calculateCard(positions[24] + positions[25]);
+    positions['28.1'] = calculateCard(positions[23] + positions[27]);
+    positions[29] = calculateCard(positions[22] + positions[26]);
+
+    // Кармический портрет
+    positions['2.1'] = month > 12 ? month - 12 : month;
+    positions[9] = calculateCard(Math.abs(p1 - p2));
+    positions[10] = calculateCard(Math.abs(p2 - p3));
+    positions[11] = calculateCard(Math.abs(positions[9] - positions[10]));
+    positions[15] = calculateCard(positions[9] + positions[10] + positions[11] - positions[7]);
+    positions['15.1'] = calculateCard(positions[11] - positions[13]);
+    positions[16] = calculateCard(p1 + positions[4] + positions[5] + p3);
+    positions[17] = calculateCard(positions[11] + positions[6]);
+    positions[18] = calculateCard(positions[11] + positions[8]);
+
+    return positions;
 }
 
 function calculateCard(num) {
