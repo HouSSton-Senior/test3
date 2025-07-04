@@ -251,7 +251,7 @@ function calculateAllPositions(day, month, year) {
         12: calculateCard(p1 + p2 - p3),
         13: calculateCard(p1 + p3 - p2),
         14: calculateCard(p2 + p3 - p1)
-        4: p4, 5: p5, 6: p6,
+        4.1: p4, 5: p5, 6: p6,
         7: calculateCard(p1 + p5),
         8: calculateCard(p2 + p6),
         12: calculateCard(positions[7] + positions[8]),
