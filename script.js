@@ -17,20 +17,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 // 1. Вспомогательные функции
 function calculateCard(number) {
-    // Приводим к числу на случай если передали строку
-    number = Number(number);
-    
-    // Если число отрицательное - берем модуль
     number = Math.abs(number);
-    
-    // Для чисел больше 22 (количество Старших Арканов)
-    // Вычисляем сумму цифр пока не получим число от 1 до 22
     while (number > 22) {
         number = [...String(number)].reduce((sum, d) => sum + Number(d), 0);
     }
-    
-    // Если получилось 0 (маловероятно), возвращаем 22 - Шут
-    return number === 0 ? 22 : number;
+    // Теперь 22 → 0, но в расчетах 22 остается 22
+    return number === 22 ? 0 : number;
 }
 
 function isValidDate(dateStr) {
