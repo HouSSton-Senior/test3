@@ -334,6 +334,29 @@ const cardDefinitions = {
     return cardDefinitions[spreadType] || [];
 }
 
+// Кнопка "Наверх" с улучшенной логикой
+const backToTopBtn = document.getElementById('backToTopBtn');
+
+// Плавное появление/исчезновение
+window.addEventListener('scroll', () => {
+  backToTopBtn.classList.toggle('visible', window.scrollY > 300);
+});
+
+// Плавный скролл с инерцией
+backToTopBtn.addEventListener('click', () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
+
+// Микро-анимация при первом появлении
+setTimeout(() => {
+  backToTopBtn.style.transition = 'all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55)';
+}, 1000);
+
+
+
 // тестовые функции для консоли
 
 // Проверка для даты 07.07.1999
