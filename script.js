@@ -152,11 +152,10 @@ function calculateAllPositions(day, month, year) {
     // Основные позиции
     positions[1] = calculateCard(day); // День
     positions[2] = calculateCard(month); // Месяц
-    // 3. Год (НОВАЯ ЛОГИКА)
-    positions[3] = calculateCard(
-        [...String(year)].reduce((sum, d) => sum + Number(d), 0),
-        true  // isYearCalculation = true
-    );
+   positions[3] = (() => {
+        const sum = [...String(year)].reduce((s, d) => s + Number(d), 0);
+        return sum > 22 ? sum - 22 : sum === 22 ? 0 : sum;
+    })();
 
     // Индивидуальный портрет
     // производные 4-14
@@ -198,7 +197,12 @@ function calculateAllPositions(day, month, year) {
 
     return positions;    
 }
-
+// вот эта функция непонятная, но пускай пока будет. 
+function calculateCard(number) {
+    number = Math.abs(number);
+    return number > 22 ? number - 22 : number === 22 ? 0 : number;
+}
+//вот тут она заканчивается. Если че - удалить нахуй. 
 // Расчёт портрета
 async function calculatePortrait() {
     const btn = document.getElementById('calculateBtn');
@@ -325,30 +329,44 @@ const cardDefinitions = {
 
 // тестовые функции для консоли
 
-console.log('\n=== ПРОВЕРКА РАСЧЁТОВ ===');
+// Проверка для даты 07.07.1999
+function testDate_07_07_1999() {
+  console.log('=== ТЕСТ ДАТЫ 07.07.1999 ===');
+  
+  // 1. Рассчитываем позицию 3 (год)
+  const year = 1999;
+  const yearSum = [...String(year)].reduce((s, d) => s + Number(d), 0); // 1+9+9+9=28
+  const yearCard = yearSum > 22 ? yearSum - 22 : yearSum === 22 ? 0 : yearSum; // 28-22=6
+  
+  console.log('Год 1999:');
+  console.log(`1+9+9+9 = ${yearSum} → ${yearSum > 22 ? `${yearSum}-22 = ${yearCard}` : yearCard}`);
+  console.log('Результат (позиция 3):', yearCard, '(Влюблённые)');
+  
+  // 2. Рассчитываем остальные позиции
+  const dayCard = 7; // 07 → 7 (Колесница)
+  const monthCard = 7; // 07 → 7 (Колесница)
+  
+  console.log('\nДень 07 →', dayCard, '(Колесница)');
+  console.log('Месяц 07 →', monthCard, '(Колесница)');
+  
+  // 3. Пример зависимой позиции (позиция 5 = месяц + год)
+  const pos5 = dayCard + monthCard; // 7 + 7 = 14
+  const pos5Card = pos5 > 22 ? pos5 - 22 : pos5 === 22 ? 0 : pos5; // 14 (Умеренность)
+  
+  console.log('\nПозиция 5 (месяц + год):');
+  console.log(`7 + 7 = ${pos5} → ${pos5Card} (Умеренность)`);
+  
+  // 4. Полный результат
+  console.log('\nИтоговые позиции:', {
+    1: dayCard,
+    2: monthCard,
+    3: yearCard,
+    5: pos5Card
+  });
+}
 
-// Тест для года (особая логика)
-const testYear = (year, expected) => {
-  const result = calculateCard(year, true);
-  console.log(`Год ${year} → ${result}`, result === expected ? '✅' : '❌ (Ожидалось: ' + expected + ')');
-};
-
-// Тест для обычных чисел
-const testNumber = (num, expected) => {
-  const result = calculateCard(num);
-  console.log(`Число ${num} → ${result}`, result === expected ? '✅' : '❌ (Ожидалось: ' + expected + ')');
-};
-
-// Запуск тестов
-testYear(1999, 6);    // 1+9+9+9=28 → 28-22=6
-testYear(2000, 2);    // 2+0+0+0=2
-testYear(1984, 0);    // 1+9+8+4=22 → 0
-testNumber(25, 3);    // 25-22=3
-testNumber(44, 0);    // 44-22=22 → 0
-testNumber(17, 17);   // <22 → без изменений
-
-// Тест полной даты
-console.log('\nТест даты 29.11.1999 →', calculateAllPositions(29, 11, 1999));
+// Запускаем тест
+testDate_07_07_1999();
 // =============================================
 // ▲▲▲ КОНЕЦ БЛОКА ДЛЯ ВСТАВКИ ▲▲▲
 
