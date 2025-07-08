@@ -16,19 +16,16 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 // 1. Вспомогательные функции
-function calculateCard(number, isYearCalculation = false) {
-    number = Math.abs(number);
+// Упрощённая функция расчёта карты
+function calculateCard(number, isYear = false) {
+    let n = Math.abs(number);
     
-    // Особый расчёт для позиции 3 (год) → 1999 → 28 → 6
-    if (isYearCalculation) {
-        return number > 22 ? number - 22 : number === 22 ? 0 : number;
-    }
+    // Только для года: сумма цифр
+    if (isYear) n = String(n).split('').reduce((sum, d) => sum + +d, 0);
     
-    // Стандартный расчёт для всех остальных позиций
-    while (number > 22) {
-        number = [...String(number)].reduce((sum, d) => sum + Number(d), 0);
-    }
-    return number === 22 ? 0 : number;
+    // Для всех случаев: вычитаем 22 если >22
+    if (n > 22) n -= 22;
+    return n === 22 ? 0 : n;
 }
 
 function isValidDate(dateStr) {
@@ -326,9 +323,34 @@ const cardDefinitions = {
     return cardDefinitions[spreadType] || [];
 }
 
-// Остальные функции (без изменений)
+// тестовые функции для консоли
 
+console.log('\n=== ПРОВЕРКА РАСЧЁТОВ ===');
 
+// Тест для года (особая логика)
+const testYear = (year, expected) => {
+  const result = calculateCard(year, true);
+  console.log(`Год ${year} → ${result}`, result === expected ? '✅' : '❌ (Ожидалось: ' + expected + ')');
+};
+
+// Тест для обычных чисел
+const testNumber = (num, expected) => {
+  const result = calculateCard(num);
+  console.log(`Число ${num} → ${result}`, result === expected ? '✅' : '❌ (Ожидалось: ' + expected + ')');
+};
+
+// Запуск тестов
+testYear(1999, 6);    // 1+9+9+9=28 → 28-22=6
+testYear(2000, 2);    // 2+0+0+0=2
+testYear(1984, 0);    // 1+9+8+4=22 → 0
+testNumber(25, 3);    // 25-22=3
+testNumber(44, 0);    // 44-22=22 → 0
+testNumber(17, 17);   // <22 → без изменений
+
+// Тест полной даты
+console.log('\nТест даты 29.11.1999 →', calculateAllPositions(29, 11, 1999));
+// =============================================
+// ▲▲▲ КОНЕЦ БЛОКА ДЛЯ ВСТАВКИ ▲▲▲
 
 
 
