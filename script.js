@@ -165,10 +165,10 @@ function calculateAllPositions(day, month, year) {
     // производные 4-14
     positions[4] = calculateCard(positions[1] + positions[2]);
     positions[5] = calculateCard(positions[2] + positions[3]);
-    positions[6] = calculateCard(positions[1] + positions[3]);
+    positions[6] = calculateCard(positions[4] + positions[5]);
     positions[7] = calculateCard(positions[1] + positions[5]);
     positions[8] = calculateCard(positions[2] + positions[6]);
-    positions[12] = calculateCard(positions[7] + positions[8]);
+    positions[12] = calculateCard(positions[4] + positions[5] + positions[6]);
     positions[13] = calculateCard(positions[1] + positions[4] + positions[6]);
     positions[14] = calculateCard(positions[3] + positions[5] + positions[6]);
 
@@ -189,9 +189,9 @@ function calculateAllPositions(day, month, year) {
     positions[9] = calculateCard(Math.abs(positions[1] - positions[2]));
     positions[10] = calculateCard(Math.abs(positions[2] - positions[3]));
     positions[11] = calculateCard(Math.abs(positions[9] - positions[10]));
-    positions[15] = calculateCard(positions[9] + positions[10] + positions[11]);
-    positions['15.1'] = calculateCard((positions[9] + positions[10] + positions[11]) - positions[7]);
-    positions[16] = calculateCard(positions[1] + positions[4] + positions[5] + positions[3]);
+    positions[15] = calculateCard(positions[9] + positions[10] + positions[11]) - positions[7]);
+    positions['15.1'] = calculateCard((positions[9] + positions[10] + positions[11]);
+    positions[16] = calculateCard(positions[1] + positions[3] + positions[4] + positions[5]);
     positions[17] = calculateCard(positions[11] + positions[6]);
     positions[18] = calculateCard(positions[11] + positions[8]);
 
