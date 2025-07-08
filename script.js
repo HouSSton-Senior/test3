@@ -171,6 +171,10 @@ function calculateAllPositions(day, month, year) {
     positions[12] = calculateCard(positions[4] + positions[5] + positions[6]);
     positions[13] = calculateCard(positions[1] + positions[4] + positions[6]);
     positions[14] = calculateCard(positions[3] + positions[5] + positions[6]);
+    // новые позиции, которые добавлены 08.07 после анализа формул. 
+    positions[19] = calculateCard(positions[4] + positions[6]);
+    positions[20] = calculateCard(positions[5] + positions[6] + positions[7]);
+    positions[21] = calculateCard(positions[1] + positions[2] + positions[3]+ positions[4]+ positions[5]+ positions[6]);
 
     // Теневой портрет
     positions['4.1'] = calculateCard(positions[1] + positions[2]);
