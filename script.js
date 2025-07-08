@@ -5,6 +5,12 @@ let currentDay, currentMonth, currentYear;
 let currentSpreadType = 'individual';
 let currentJsonFile = 'ind.json';
 
+//функция для нормализации работы шута с id0, но числом 22 
+function getCardValue(id) {
+    return id === 0 ? 22 : id; // Преобразует ID карты в числовое значение (Шут=0 → 22)
+}
+//конец этой цункции
+
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', async function() {
     // 1. Загружаем базовые названия арканов
@@ -188,9 +194,10 @@ function calculateAllPositions(day, month, year) {
     positions['2.1'] = positions[2];
     positions[9] = calculateCard(Math.abs(positions[1] - positions[2]));
     positions[10] = calculateCard(Math.abs(positions[2] - positions[3]));
-    positions[11] = calculateCard(Math.abs(positions[9] - positions[10]));
-    positions[15] = calculateCard(positions[9] + positions[10] + positions[11] - positions[7]);
-    positions['15.1'] = calculateCard(positions[9] + positions[10] + positions[11]);
+    positions[11] = calculateCard(
+    Math.abs(getCardValue(positions[9]) - getCardValue(positions[10]))); //первая исправленная версия с шутом и магом на этих позициях. 
+    positions[15] = calculateCard(positions[9] + positions[10] + positions[11] - positions[7]); !!!!!!!!!!!!!!
+    positions['15.1'] = calculateCard(positions[9] + positions[10] + positions[11]); !!!!!!!!!!
     positions[16] = calculateCard(positions[1] + positions[3] + positions[4] + positions[5]);
     positions[17] = calculateCard(positions[11] + positions[6]);
     positions[18] = calculateCard(positions[11] + positions[8]);
@@ -330,43 +337,9 @@ const cardDefinitions = {
 // тестовые функции для консоли
 
 // Проверка для даты 07.07.1999
-function testDate_07_07_1999() {
-  console.log('=== ТЕСТ ДАТЫ 07.07.1999 ===');
-  
-  // 1. Рассчитываем позицию 3 (год)
-  const year = 1999;
-  const yearSum = [...String(year)].reduce((s, d) => s + Number(d), 0); // 1+9+9+9=28
-  const yearCard = yearSum > 22 ? yearSum - 22 : yearSum === 22 ? 0 : yearSum; // 28-22=6
-  
-  console.log('Год 1999:');
-  console.log(`1+9+9+9 = ${yearSum} → ${yearSum > 22 ? `${yearSum}-22 = ${yearCard}` : yearCard}`);
-  console.log('Результат (позиция 3):', yearCard, '(Влюблённые)');
-  
-  // 2. Рассчитываем остальные позиции
-  const dayCard = 7; // 07 → 7 (Колесница)
-  const monthCard = 7; // 07 → 7 (Колесница)
-  
-  console.log('\nДень 07 →', dayCard, '(Колесница)');
-  console.log('Месяц 07 →', monthCard, '(Колесница)');
-  
-  // 3. Пример зависимой позиции (позиция 5 = месяц + год)
-  const pos5 = dayCard + monthCard; // 7 + 7 = 14
-  const pos5Card = pos5 > 22 ? pos5 - 22 : pos5 === 22 ? 0 : pos5; // 14 (Умеренность)
-  
-  console.log('\nПозиция 5 (месяц + год):');
-  console.log(`7 + 7 = ${pos5} → ${pos5Card} (Умеренность)`);
-  
-  // 4. Полный результат
-  console.log('\nИтоговые позиции:', {
-    1: dayCard,
-    2: monthCard,
-    3: yearCard,
-    5: pos5Card
-  });
-}
-
-// Запускаем тест
-testDate_07_07_1999();
+console.log("Проверка getCardValue():", 
+    getCardValue(0), "→ 22 (Шут)",
+    getCardValue(5), "→ 5 (Иерофант)");
 // =============================================
 // ▲▲▲ КОНЕЦ БЛОКА ДЛЯ ВСТАВКИ ▲▲▲
 
