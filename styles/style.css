@@ -430,6 +430,8 @@ button:hover {
 /* добавление кнопки наверх*/
 /* Кнопка "Наверх" */
 .back-to-top {
+    width: 70px;
+  height: 70px;
   position: fixed;
   bottom: 30px;
   right: 30px;
@@ -461,10 +463,10 @@ button:hover {
 }
 
 .back-to-top-icon {
-  width: 24px;
-  height: 24px;
+  width: 40px;
+  height: 40px;
   fill: white;
-  transition: transform 0.3s;
+  transition: transform 0.3s ease;
 }
 
 .back-to-top:hover .back-to-top-icon {
