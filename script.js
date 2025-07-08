@@ -196,8 +196,8 @@ function calculateAllPositions(day, month, year) {
     positions[10] = calculateCard(Math.abs(positions[2] - positions[3]));
     positions[11] = calculateCard(
     Math.abs(getCardValue(positions[9]) - getCardValue(positions[10]))); //первая исправленная версия с шутом и магом на этих позициях. 
-    positions[15] = calculateCard(positions[9] + positions[10] + positions[11] - positions[7]); !!!!!!!!!!!!!!
-    positions['15.1'] = calculateCard(positions[9] + positions[10] + positions[11]); !!!!!!!!!!
+    positions[15] = calculateCard(positions[9] + positions[10] + positions[11] - positions[7]); //!!!!!!!!!!!!!!
+    positions['15.1'] = calculateCard(positions[9] + positions[10] + positions[11]); //!!!!!!!!!!
     positions[16] = calculateCard(positions[1] + positions[3] + positions[4] + positions[5]);
     positions[17] = calculateCard(positions[11] + positions[6]);
     positions[18] = calculateCard(positions[11] + positions[8]);
