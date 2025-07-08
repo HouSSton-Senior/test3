@@ -224,6 +224,9 @@ async function calculatePortrait() {
             return;
         }
 
+        const startMessage = document.getElementById('startMessage'); // стартовое сообщение 
+        if (startMessage) startMessage.classList.add('hidden'); // скрыть старт.сообщение
+        
         const [day, month, year] = dateStr.split('.').map(Number);
         const positions = calculateAllPositions(day, month, year);
         createCardsLayout(currentSpreadType, positions);
@@ -235,6 +238,8 @@ async function calculatePortrait() {
         btn.classList.remove('loading');
     }
 }
+
+
 
 // Создание карточек на странице
 function createCardsLayout(spreadType, positions) {
