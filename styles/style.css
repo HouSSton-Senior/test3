@@ -481,3 +481,34 @@ button:hover {
     right: 20px;
   }
 }
+
+/* Стартовое описание */
+.start-message {
+  text-align: center;
+  padding: 20px;
+  background: rgba(138, 43, 226, 0.05);
+  border-radius: 15px;
+  border-left: 3px solid #8a2be2;
+  margin: 0 auto 30px;
+  max-width: 600px;
+}
+
+.start-message h3 {
+  color: #8a2be2;
+  margin-bottom: 15px;
+}
+
+.start-message p {
+  margin: 10px 0;
+  line-height: 1.5;
+  color: #333;
+}
+
+.start-message.hidden {
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  transition: all 0.5s ease;
+}
