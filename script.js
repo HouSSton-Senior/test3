@@ -16,12 +16,18 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 // 1. Вспомогательные функции
-function calculateCard(number) {
+function calculateCard(number, isYearCalculation = false) {
     number = Math.abs(number);
+    
+    // Особый расчёт для позиции 3 (год) → 1999 → 28 → 6
+    if (isYearCalculation) {
+        return number > 22 ? number - 22 : number === 22 ? 0 : number;
+    }
+    
+    // Стандартный расчёт для всех остальных позиций
     while (number > 22) {
         number = [...String(number)].reduce((sum, d) => sum + Number(d), 0);
     }
-    // Возвращаем 0 для Шута (22 → 0), остальные числа как есть
     return number === 22 ? 0 : number;
 }
 
@@ -149,7 +155,11 @@ function calculateAllPositions(day, month, year) {
     // Основные позиции
     positions[1] = calculateCard(day); // День
     positions[2] = calculateCard(month); // Месяц
-    positions[3] = calculateCard([...String(year)].reduce((sum, d) => sum + Number(d), 0)); // Сумма цифр года
+    // 3. Год (НОВАЯ ЛОГИКА)
+    positions[3] = calculateCard(
+        [...String(year)].reduce((sum, d) => sum + Number(d), 0),
+        true  // isYearCalculation = true
+    );
 
     // Индивидуальный портрет
     // производные 4-14
