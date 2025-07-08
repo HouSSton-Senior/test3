@@ -482,33 +482,39 @@ button:hover {
   }
 }
 
-/* Стартовое описание */
+/* Стили только для стартового сообщения */
 .start-message {
+  font-family: 'Marmelad', sans-serif; /* Ваш основной шрифт */
   text-align: center;
-  padding: 20px;
-  background: rgba(138, 43, 226, 0.05);
-  border-radius: 15px;
-  border-left: 3px solid #8a2be2;
+  padding: 25px;
+  background: rgba(138, 43, 226, 0.05); /* Полупрозрачный фиолетовый фон */
+  border-radius: 12px;
+  border-left: 4px solid #8a2be2; /* Фиолетовая акцентная полоса */
   margin: 0 auto 30px;
   max-width: 600px;
 }
 
 .start-message h3 {
-  color: #8a2be2;
+  font-size: 22px; /* Размер заголовка */
+  color: #5a2d82; /* Темно-фиолетовый */
   margin-bottom: 15px;
+  font-weight: normal; /* Убираем жирность (или добавьте font-weight: 500 если нужно) */
 }
 
 .start-message p {
-  margin: 10px 0;
+  font-size: 18px; /* Размер текста */
+  color: #4a4a4a; /* Темно-серый (можно заменить на #333) */
+  margin: 12px 0;
   line-height: 1.5;
-  color: #333;
 }
 
+/* Анимация исчезновения */
 .start-message.hidden {
   opacity: 0;
+  transform: translateY(-10px);
   height: 0;
   padding: 0;
   margin: 0;
   overflow: hidden;
-  transition: all 0.5s ease;
+  transition: all 0.4s ease-out;
 }
