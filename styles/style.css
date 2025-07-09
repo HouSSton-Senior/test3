@@ -521,17 +521,21 @@ button:hover {
 
 
 /* Стили для кнопки переключения состояния Скрыть/показать трактовку*/
+.arcana-meaning.hidden {
+  display: none;
+}
+
+
 .toggle-description {
-  background: transparent;
+  background: none;
   border: none;
   color: #8a2be2;
   cursor: pointer;
   font-family: 'Marmelad', sans-serif;
   padding: 5px 0;
-  margin: 10px 0;
+  margin: 5px 0 0;
   text-align: left;
   width: 100%;
-  transition: all 0.3s;
 }
 
 .toggle-description:hover {
