@@ -263,13 +263,10 @@ function createCardsLayout(spreadType, positions) {
                 
                 <div class="arcana-result">
                     <h4>${baseCard.name || 'Неизвестно'} <span class="arcana-number">${displayNum}</span></h4>
-                    <p class="arcana-meaning"><strong>${meaning}</strong></p>
-                    
-                    <div class="full-description hidden">
-                        <p>${cardDef.fullDescription || 'Описание отсутствует'}</p>
+                    <div class="arcana-meaning-container">
+                        <p class="arcana-meaning hidden"><strong>${meaning}</strong></p>
+                        <button class="toggle-description">▼ Показать трактовку</button>
                     </div>
-                    
-                    <button class="toggle-description">▼ Показать полную трактовку</button>
                 </div>
             </div>
         `;
@@ -280,11 +277,11 @@ function createCardsLayout(spreadType, positions) {
     // Обработчики для кнопок
     document.querySelectorAll('.toggle-description').forEach(btn => {
         btn.addEventListener('click', function() {
-            const desc = this.previousElementSibling;
-            desc.classList.toggle('hidden');
-            this.textContent = desc.classList.contains('hidden') 
-                ? '▼ Показать полную трактовку' 
-                : '▲ Скрыть полную трактовку';
+            const meaning = this.parentElement.querySelector('.arcana-meaning');
+            meaning.classList.toggle('hidden');
+            this.textContent = meaning.classList.contains('hidden') 
+                ? '▼ Показать трактовку' 
+                : '▲ Скрыть трактовку';
         });
     });
 } //здесь заканчивается функция для создания карточек. 
