@@ -518,3 +518,44 @@ button:hover {
   overflow: hidden;
   transition: all 0.4s ease-out;
 }
+
+
+/* Стили для кнопки переключения состояния Скрыть/показать трактовку*/
+.toggle-description {
+  background: transparent;
+  border: none;
+  color: #8a2be2;
+  cursor: pointer;
+  font-family: 'Marmelad', sans-serif;
+  padding: 5px 0;
+  margin: 10px 0;
+  text-align: left;
+  width: 100%;
+  transition: all 0.3s;
+}
+
+.toggle-description:hover {
+  color: #6a3093;
+  text-decoration: underline;
+}
+
+.toggle-description::after {
+  content: " ▼";
+  font-size: 0.8em;
+}
+
+.toggle-description.active::after {
+  content: " ▲";
+}
+
+/* Анимация появления */
+.full-description {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease, padding 0.3s ease;
+}
+
+.full-description.show {
+  max-height: 1000px; /* Достаточно большое значение */
+  padding-top: 10px;
+}
