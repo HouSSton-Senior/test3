@@ -261,18 +261,18 @@ function createCardsLayout(spreadType, positions) {
                 <h3>${cardDef.title}</h3>
                 <p class="position-description">${cardDef.description}</p>
                 
-                <div class="full-description hidden">
-                    <p>${cardDef.fullDescription || 'Описание отсутствует'}</p>
-                </div>
-                
-                <button class="toggle-description">▼ Показать полную трактовку</button>
-                
                 <div class="arcana-result">
                     <h4>${baseCard.name || 'Неизвестно'} <span class="arcana-number">${displayNum}</span></h4>
                     <p class="arcana-meaning"><strong>${meaning}</strong></p>
                     ${spreadType === 'shadow' ? 
                         `<p class="shadow-aspect"><em>Теневая сторона: ${meaningsCard.meanings?.shadow?.default || 'нет информации'}</em></p>` : ''}
                 </div>
+                
+                <div class="full-description hidden">
+                    <p>${cardDef.fullDescription || 'Описание отсутствует'}</p>
+                </div>
+                
+                <button class="toggle-description">▲ Скрыть полную трактовку</button>
             </div>
         `;
         
