@@ -241,17 +241,15 @@ async function calculatePortrait() {
 
 
 
-// Создание карточек на странице
 function createCardsLayout(spreadType, positions) {
     const resultSection = document.getElementById('result');
     if (!resultSection) return;
     
     resultSection.innerHTML = '<div class="cards-grid"></div>';
     const cardsGrid = resultSection.querySelector('.cards-grid');
-    
+
     getCardDefinitions(spreadType).forEach(cardDef => {
         let cardNum = positions[cardDef.position] || 0;
-        // Для отображения: если cardNum === 0 (Шут), показываем 22
         const displayNum = cardNum === 0 ? 22 : cardNum;
         
         const baseCard = arcanaBaseData.find(c => c.id === cardNum) || {};
@@ -262,10 +260,13 @@ function createCardsLayout(spreadType, positions) {
             <div class="card" id="pos${cardDef.position}-card">
                 <h3>${cardDef.title}</h3>
                 <p class="position-description">${cardDef.description}</p>
+                
                 <div class="full-description hidden">
                     <p>${cardDef.fullDescription || 'Описание отсутствует'}</p>
                 </div>
-                <button class="toggle-description">Показать описание</button>
+                
+                <button class="toggle-description">▼ Показать полную трактовку</button>
+                
                 <div class="arcana-result">
                     <h4>${baseCard.name || 'Неизвестно'} <span class="arcana-number">${displayNum}</span></h4>
                     <p class="arcana-meaning"><strong>${meaning}</strong></p>
@@ -278,20 +279,17 @@ function createCardsLayout(spreadType, positions) {
         cardsGrid.insertAdjacentHTML('beforeend', cardHTML);
     });
 
-    // Добавляем обработчики для кнопок описания
+    // Обработчики для кнопок
     document.querySelectorAll('.toggle-description').forEach(btn => {
         btn.addEventListener('click', function() {
             const desc = this.previousElementSibling;
-            if (desc.classList.contains('hidden')) {
-                desc.classList.remove('hidden');
-                this.textContent = 'Скрыть описание';
-            } else {
-                desc.classList.add('hidden');
-                this.textContent = 'Показать описание';
-            }
+            desc.classList.toggle('hidden');
+            this.textContent = desc.classList.contains('hidden') 
+                ? '▼ Показать полную трактовку' 
+                : '▲ Скрыть полную трактовку';
         });
     });
-}
+} //здесь заканчивается функция для создания карточек. 
 
 // Ваши заполненные карточки (оставьте без изменений!)
 function getCardDefinitions(spreadType) {
