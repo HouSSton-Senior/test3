@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     setupEventListeners();
 });
 
-// 1. Вспомогательные функции
+// 1. Вспомогательные функции ! 
 // Упрощённая функция расчёта карты
 function calculateCard(number, isYear = false) {
     let n = Math.abs(number);
