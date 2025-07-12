@@ -7,19 +7,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}  # Ключевая строка!
-      
+
       - name: Update version
         run: |
           # 1. Получаем текущую версию
-          CURRENT=$(grep -oP "version = localStorage\.getItem\('tarot-version'\) \|\| '\K[^']+" version-updater.js || echo "0.1.1.0")
+          CURRENT=$(grep -oP "const SITE_VERSION = '\K[^']+" version-updater.js || echo "0.1.1.0")
           
-          # 2. Увеличиваем версию
+          # 2. Увеличиваем последнюю цифру (0.1.1.0 → 0.1.1.1)
           NEW=$(echo $CURRENT | awk -F. '{$NF+=1; print $0}' | tr ' ' '.')
           
           # 3. Обновляем файл
-          sed -i "s/version = localStorage\.getItem('tarot-version') || '.*'/version = localStorage\.getItem('tarot-version') || '$NEW'/" version-updater.js
+          sed -i "s/const SITE_VERSION = '.*'/const SITE_VERSION = '$NEW'/" version-updater.js
           
           # 4. Пушим изменения
           git config --global user.name "GitHub Actions"
