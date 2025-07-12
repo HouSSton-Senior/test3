@@ -1,0 +1,26 @@
+name: Update Version
+on: [push]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update version
+        run: |
+          # 1. Получаем текущую версию
+          CURRENT=$(grep -oP "SITE_VERSION = '\K[^']+" js/version.js || echo "0.1.1.0")
+          
+          # 2. Увеличиваем последнюю цифру (0.1.1.0 → 0.1.1.1)
+          NEW=$(echo $CURRENT | awk -F. '{$NF+=1; print $0}' | tr ' ' '.')
+          
+          # 3. Записываем новую версию
+          echo "const SITE_VERSION = '$NEW';" > js/version.js
+          echo "console.log('%c🔮 Версия: $NEW', 'color: #8a2be2; font-weight: bold;');" >> js/version.js
+          
+          # 4. Пушим изменения
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add js/version.js
+          git commit -m "Auto-update version to $NEW [skip ci]"
+          git push
