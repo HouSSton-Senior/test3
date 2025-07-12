@@ -9,14 +9,14 @@ jobs:
       - name: Update version
         run: |
           # 1. Получаем текущую версию
-          CURRENT=$(grep -oP "SITE_VERSION = '\K[^']+" js/version-updater.js || echo "0.1.1.0")
+          CURRENT=$(grep -oP "SITE_VERSION = '\K[^']+" version-updater.js || echo "0.1.1.0")
           
           # 2. Увеличиваем последнюю цифру (0.1.1.0 → 0.1.1.1)
           NEW=$(echo $CURRENT | awk -F. '{$NF+=1; print $0}' | tr ' ' '.')
           
           # 3. Записываем новую версию
-          echo "const SITE_VERSION = '$NEW';" > js/version-updater.js
-          echo "console.log('%c🔮 Версия: $NEW', 'color: #8a2be2; font-weight: bold;');" >> js/version-updater.js
+          echo "const SITE_VERSION = '$NEW';" > version-updater.js
+          echo "console.log('%c🔮 Версия: $NEW', 'color: #8a2be2; font-weight: bold;');" >> version-updater.js
           
           # 4. Пушим изменения
           git config --global user.name "GitHub Actions"
