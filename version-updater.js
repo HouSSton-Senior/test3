@@ -1,5 +1,5 @@
 // version-tracker.js
-let version = localStorage.getItem('tarot-version') || '0.1.1.0';
+let version = localStorage.getItem('tarot-version') || '0.1.1.1';
 
 const updateVersion = () => {
   const parts = version.split('.');
