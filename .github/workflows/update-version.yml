@@ -6,21 +6,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Важно для git push
       
-      - name: Update version in version-tracker.js
+      - name: Create version-updater.js if missing
         run: |
-          # 1. Получаем текущую версию из файла (или 0.1.1.0 по умолчанию)
-          CURRENT=$(grep -oP "version = localStorage\.getItem\('tarot-version'\) \|\| '\K[^']+" version-tracker.js || echo "0.1.1.0")
+          if [ ! -f "version-updater.js" ]; then
+            echo "Создаю version-updater.js..."
+            echo "let version = localStorage.getItem('tarot-version') || '0.1.1.0';" > version-updater.js
+            echo "const updateVersion = () => {" >> version-updater.js
+            echo "  const parts = version.split('.');" >> version-updater.js
+            echo "  parts[3] = String(Number(parts[3]) + 1);" >> version-updater.js
+            echo "  version = parts.join('.');" >> version-updater.js
+            echo "  localStorage.setItem('tarot-version', version);" >> version-updater.js
+            echo "  console.log(\`%c🔮 Версия: \${version}\n%cПоследнее изменение: \${new Date().toLocaleTimeString()}\`," >> version-updater.js
+            echo "    'color: #8a2be2; font-weight: bold;', 'color: #777;');" >> version-updater.js
+            echo "};" >> version-updater.js
+            echo "document.addEventListener('DOMContentLoaded', updateVersion);" >> version-updater.js
+          fi
           
-          # 2. Увеличиваем последнюю цифру (0.1.1.0 → 0.1.1.1)
+      - name: Update version
+        run: |
+          # 1. Получаем текущую версию
+          CURRENT=$(grep -oP "version = localStorage\.getItem\('tarot-version'\) \|\| '\K[^']+" version-updater.js || echo "0.1.1.0")
+          
+          # 2. Увеличиваем версию
           NEW=$(echo $CURRENT | awk -F. '{$NF+=1; print $0}' | tr ' ' '.')
           
-          # 3. Обновляем файл version-tracker.js
-          sed -i "s/version = localStorage\.getItem('tarot-version') || '.*'/version = localStorage\.getItem('tarot-version') || '$NEW'/" version-tracker.js
+          # 3. Обновляем файл
+          sed -i "s/version = localStorage\.getItem('tarot-version') || '.*'/version = localStorage\.getItem('tarot-version') || '$NEW'/" version-updater.js
           
           # 4. Пушим изменения
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add version-tracker.js
+          git add version-updater.js
           git commit -m "Auto-update version to $NEW [skip ci]"
           git push
