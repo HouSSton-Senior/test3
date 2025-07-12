@@ -1,5 +1,5 @@
 // Глобальные переменные
-let arcanaBaseData = []; // Данные из base.json
+let arcanaBaseData = []; // Данные из base.json n 
 let arcanaMeaningsData = []; // Данные из ind.json/shadow.json/karma.json
 let currentDay, currentMonth, currentYear;
 let currentSpreadType = 'individual';
