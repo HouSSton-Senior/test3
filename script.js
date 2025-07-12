@@ -9,7 +9,7 @@ let currentJsonFile = 'ind.json';
 function getCardValue(id) {
     return id === 0 ? 22 : id; // Преобразует ID карты в числовое значение (Шут=0 → 22)
 }
-//конец этой цункции
+//конец этой функции
 
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', async function() {
