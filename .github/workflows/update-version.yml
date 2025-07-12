@@ -12,11 +12,11 @@ jobs:
 
       - name: Update version
         run: |
-          # 1. Получаем текущую версию
-          CURRENT=$(grep -oP "const SITE_VERSION = '\K[^']+" version-updater.js || echo "0.1.1.0")
+          # 1. Получаем текущую версию из файла
+          CURRENT=$(grep -oP "const SITE_VERSION = '\K[^']+" version-updater.js)
           
-          # 2. Увеличиваем последнюю цифру (0.1.1.0 → 0.1.1.1)
-          NEW=$(echo $CURRENT | awk -F. '{$NF+=1; print $0}' | tr ' ' '.')
+          # 2. Увеличиваем ПОСЛЕДНЮЮ цифру (0.1.1.2 → 0.1.1.3)
+          NEW=$(echo $CURRENT | awk -F. '{$NF+=1; print $0}' | sed 's/ /./g')
           
           # 3. Обновляем файл
           sed -i "s/const SITE_VERSION = '.*'/const SITE_VERSION = '$NEW'/" version-updater.js
