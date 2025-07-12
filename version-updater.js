@@ -1,6 +1,6 @@
 // Автообновление через GitHub Actions
-const SITE_VERSION = '0.1.0';
-const LAST_UPDATED = '07/12/2025 00:00:00';
+const SITE_VERSION = '0.1.1';
+const LAST_UPDATED = '07/12/2025 16:25:20';
 
 console.log(
   `%c🔮 Версия: ${SITE_VERSION}\n` +
