@@ -10,20 +10,22 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - name: Update version
+      - name: Update version and timestamp
         run: |
-          # Получаем текущую дату
-          NOW=$(date +'%m/%d/%Y %H:%M:%S')
+          # Получаем текущую дату в правильном формате
+          NOW=$(date +'%m\/%d\/%Y %H:%M:%S')
           
-          # Обновляем версию и дату
+          # Обновляем версию
           CURRENT_VER=$(grep -oP "const SITE_VERSION = '\K[^']+" version-updater.js)
           NEW_VER=$(echo $CURRENT_VER | awk -F. '{$NF+=1; print $0}' | tr ' ' '.')
           
+          # Обновляем файл (используем разные разделители для sed)
           sed -i \
-            -e "s/const SITE_VERSION = '.*'/const SITE_VERSION = '$NEW_VER'/" \
-            -e "s/const LAST_UPDATED = '.*'/const LAST_UPDATED = '$NOW'/" \
+            -e "s|const SITE_VERSION = '.*'|const SITE_VERSION = '$NEW_VER'|" \
+            -e "s|const LAST_UPDATED = '.*'|const LAST_UPDATED = '$NOW'|" \
             version-updater.js
           
+          # Коммитим и пушим изменения
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add version-updater.js
