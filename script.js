@@ -207,7 +207,12 @@ function calculateAllPositions(day, month, year) {
 // вот эта функция непонятная, но пускай пока будет. 
 function calculateCard(number) {
     number = Math.abs(number);
-    return number > 22 ? number - 22 : number === 22 ? 0 : number;
+    // Приводим число к диапазону 0-22
+    while (number > 22) {
+        number -= 22;
+    }
+    // Шут (22) становится 0
+    return number === 22 ? 0 : number;
 }
 //вот тут она заканчивается. Если че - удалить нахуй. 
 // Расчёт портрета
